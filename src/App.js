@@ -36,31 +36,7 @@ export default function App() {
   //Implementation #2 (Cleaner)
 
   const [currentUser, setCurrentUser] = useState("");
-  const [currentWaves, setCurrentWaves] = useState(0);
-
-  const initialWaveCount = async () => {
-    try {
-      if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const contractAddress = "0x4c1c569Ca0344C1066e242F787755bc830F34669";
-        const contractABI = abi.abi;
-        const wavePortalContract = new ethers.Contract(
-          contractAddress,
-          contractABI,
-          signer
-        );
-
-        let waves = await wavePortalContract.getTotalWaves();
-        setCurrentWaves(waves.toNumber());
-        console.log("Current Total Waves", currentWaves);
-      } else {
-        console.log("Ethereum Object not found!");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [currentWaves, setCurrentWaves] = useState("");
 
   const checkConnectedWallet = async () => {
     try {
@@ -81,6 +57,30 @@ export default function App() {
       } else {
         console.log("No accounts found!");
         return;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const initialWaveCount = async () => {
+    try {
+      if (window.ethereum) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const contractAddress = "0x4c1c569Ca0344C1066e242F787755bc830F34669";
+        const contractABI = abi.abi;
+        const wavePortalContract = new ethers.Contract(
+          contractAddress,
+          contractABI,
+          signer
+        );
+
+        let waves = await wavePortalContract.getTotalWaves();
+        setCurrentWaves(waves.toNumber());
+        console.log("Current Total Waves", currentWaves);
+      } else {
+        console.log("Ethereum Object not found!");
       }
     } catch (error) {
       console.log(error);
