@@ -18,6 +18,12 @@
   font-weight: 600;
 }
 
+.smallHeader {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 400;
+}
+
 .bio {
   text-align: center;
   color: gray;
