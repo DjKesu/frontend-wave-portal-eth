@@ -36,7 +36,35 @@ export default function App() {
   //Implementation #2 (Cleaner)
 
   const [currentUser, setCurrentUser] = useState("");
-  const [currentWaves, setCurrentWaves] = useState("");
+  const [currentWaves, setCurrentWaves] = useState(0);
+
+  useEffect(() => {
+    async function initialWaveCount(){
+      try {
+        if (window.ethereum) {
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const signer = provider.getSigner();
+          const contractAddress = "0x4c1c569Ca0344C1066e242F787755bc830F34669";
+          const contractABI = abi.abi;
+          const wavePortalContract = new ethers.Contract(
+            contractAddress,
+            contractABI,
+            signer
+          );
+  
+          let waves = await wavePortalContract.getTotalWaves();
+          setCurrentWaves(waves.toNumber());
+          // console.log("Current Total Waves", waves);
+          // console.log(currentWaves);
+        } else {
+          console.log("Ethereum Object not found!");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    initialWaveCount();
+  }, []);
 
   const checkConnectedWallet = async () => {
     try {
@@ -63,29 +91,9 @@ export default function App() {
     }
   };
 
-  const initialWaveCount = async () => {
-    try {
-      if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const contractAddress = "0x4c1c569Ca0344C1066e242F787755bc830F34669";
-        const contractABI = abi.abi;
-        const wavePortalContract = new ethers.Contract(
-          contractAddress,
-          contractABI,
-          signer
-        );
-
-        let waves = await wavePortalContract.getTotalWaves();
-        setCurrentWaves(waves.toNumber());
-        console.log("Current Total Waves", currentWaves);
-      } else {
-        console.log("Ethereum Object not found!");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  useEffect(()=>{
+    checkConnectedWallet();
+  },[]);
 
   const connectWallet = async () => {
     try {
@@ -137,11 +145,6 @@ export default function App() {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    checkConnectedWallet();
-    initialWaveCount();
-  }, []);
 
   return (
     <div>
