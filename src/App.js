@@ -197,7 +197,9 @@ export default function App() {
             <div className="bio">
               Let's get you some Fake ETH on the rinkeby Network so you can
               start posting on the message board. Don't worry! No transaction
-              will every cost you actual money :)"
+              will ever cost you actual money:)<br/>
+              <a href="https://faucets.chain.link/rinkeby">Click this link  </a>
+              and paste your public Metamask to recieve some free fake eth!
             </div>
           )}
           <button className="waveButton" onClick={wave}>

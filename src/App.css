@@ -1,3 +1,23 @@
+body{
+	background: linear-gradient(-45deg, #ebbfb1, #ecb4ca, #94c3d4, #87d8c5);
+	background-size: 100% 100%;
+	animation: gradient 10s ease infinite;
+	height: 100%;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+
 .mainContainer {
   display: flex;
   justify-content: center;
@@ -30,6 +50,13 @@
   margin-top: 16px;
 }
 
+a{
+  text-decoration: none;
+  color: white;
+  text-shadow: 1px 1px 1px black, 3px 3px 5px black;
+  /* padding-bottom: 5px; */
+}
+
 .waveButton {
   cursor: pointer;
   margin-top: 16px;
@@ -57,7 +84,7 @@
   width: 40%;
   background-color: var(--main-dark-color);
   position: absolute;
-  border-radius: 15%;
+  border-radius: 5%;
 }
 
 .left-point{
