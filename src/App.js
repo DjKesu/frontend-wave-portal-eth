@@ -37,21 +37,23 @@ export default function App() {
 
   const [currentUser, setCurrentUser] = useState("");
   const [currentWaves, setCurrentWaves] = useState(0);
+  const [allWaves, setAllWaves] = useState([]);
+
+  const contractAddress = "0x730da1DAeE5AB8a7F10ab4d5C752eD6B94AB91A4";
 
   useEffect(() => {
-    async function initialWaveCount(){
+    async function initialWaveCount() {
       try {
         if (window.ethereum) {
           const provider = new ethers.providers.Web3Provider(window.ethereum);
           const signer = provider.getSigner();
-          const contractAddress = "0x4c1c569Ca0344C1066e242F787755bc830F34669";
           const contractABI = abi.abi;
           const wavePortalContract = new ethers.Contract(
             contractAddress,
             contractABI,
             signer
           );
-  
+
           let waves = await wavePortalContract.getTotalWaves();
           setCurrentWaves(waves.toNumber());
           // console.log("Current Total Waves", waves);
@@ -65,6 +67,40 @@ export default function App() {
     }
     initialWaveCount();
   }, []);
+
+  const getAllWaves = async () => {
+    try {
+      if (window.ethereum) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const contractABI = abi.abi;
+        const wavePortalContract = new ethers.Contract(
+          contractAddress,
+          contractABI,
+          signer
+        );
+
+        const waves = await wavePortalContract.getAllWaves();
+        console.log(waves);
+
+        let cleanedWaves = [];
+        waves.forEach((wave) => {
+          cleanedWaves.push({
+            address: wave.waver,
+            message: wave.message,
+            timestamp: new Date(wave.timestamp * 1000),
+          });
+        });
+        setAllWaves(cleanedWaves);
+        // window.location.reload(false);
+      } else {
+        console.log("Not Found!");
+      }
+      // window.location.reload(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const checkConnectedWallet = async () => {
     try {
@@ -91,9 +127,10 @@ export default function App() {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     checkConnectedWallet();
-  },[]);
+    getAllWaves();
+  }, []);
 
   const connectWallet = async () => {
     try {
@@ -118,7 +155,6 @@ export default function App() {
       if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        const contractAddress = "0x4c1c569Ca0344C1066e242F787755bc830F34669";
         const contractABI = abi.abi;
         const wavePortalContract = new ethers.Contract(
           contractAddress,
@@ -130,7 +166,7 @@ export default function App() {
         setCurrentWaves(waves.toNumber());
         console.log("Current Total Waves", currentWaves);
 
-        const waveTxn = await wavePortalContract.wave();
+        const waveTxn = await wavePortalContract.wave("Waving at you!");
         console.log("Mining", waveTxn.hash);
         await waveTxn.wait();
         console.log("Mined", waveTxn.hash);
@@ -151,12 +187,19 @@ export default function App() {
       <div className="mainContainer">
         <div className="dataContainer">
           <div className="header">👋 Hey there!</div>
-
-          <div className="bio">
-            I am Krish and I work, so that's pretty cool right? Connect your
-            Ethereum wallet and wave at me!
-          </div>
-
+          {!currentUser && (
+            <div className="bio">
+              I am Krish and I work, so that's pretty cool right? Connect your
+              Ethereum wallet and wave at me!
+            </div>
+          )}
+          {currentUser && (
+            <div className="bio">
+              Let's get you some Fake ETH on the rinkeby Network so you can
+              start posting on the message board. Don't worry! No transaction
+              will every cost you actual money :)"
+            </div>
+          )}
           <button className="waveButton" onClick={wave}>
             Wave at Me
           </button>
@@ -171,6 +214,31 @@ export default function App() {
       <div className="mainContainer">
         <div className="smallHeader">Wave Count at: {currentWaves}</div>
       </div>
+      {allWaves.map((wave, index) => {
+        return (
+          <div className="box">
+            <div
+              key={index}
+              style={{
+                backgroundColor: "OldLace",
+                marginTop: "16px",
+                padding: "8px",
+              }}
+              className="dialog-1"
+            >
+              <div>
+                <div className="fit">
+                  <div>
+                    Address: {wave.address}<br/>
+                    Time: {wave.timestamp.toString()}<br/>
+                    Message: {wave.message}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
