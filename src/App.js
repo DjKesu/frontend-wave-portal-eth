@@ -38,6 +38,7 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState("");
   const [currentWaves, setCurrentWaves] = useState(0);
   const [allWaves, setAllWaves] = useState([]);
+  const [waverMessage, setWaverMessage] = useState("");
 
   const contractAddress = "0x730da1DAeE5AB8a7F10ab4d5C752eD6B94AB91A4";
 
@@ -166,7 +167,7 @@ export default function App() {
         setCurrentWaves(waves.toNumber());
         console.log("Current Total Waves", currentWaves);
 
-        const waveTxn = await wavePortalContract.wave("Waving at you!");
+        const waveTxn = await wavePortalContract.wave(waverMessage);
         console.log("Mining", waveTxn.hash);
         await waveTxn.wait();
         console.log("Mined", waveTxn.hash);
@@ -181,6 +182,12 @@ export default function App() {
       console.log(error);
     }
   };
+
+  function updateMessage(event) {
+    const message = event.target.value;
+    setWaverMessage(message);
+    console.log(waverMessage);
+  }
 
   return (
     <div>
@@ -197,11 +204,18 @@ export default function App() {
             <div className="bio">
               Let's get you some Fake ETH on the rinkeby Network so you can
               start posting on the message board. Don't worry! No transaction
-              will ever cost you actual money:)<br/>
-              <a href="https://faucets.chain.link/rinkeby">Click this link  </a>
+              will ever cost you actual money:)
+              <br />
+              <a href="https://faucets.chain.link/rinkeby">Click this link </a>
               and paste your public Metamask to recieve some free fake eth!
             </div>
           )}
+          <input
+            className="inputBox"
+            placeholder="Enter your message for the world to know!"
+            value={waverMessage}
+            onChange={(evt) => updateMessage(evt)}
+          />
           <button className="waveButton" onClick={wave}>
             Wave at Me
           </button>
@@ -216,7 +230,7 @@ export default function App() {
       <div className="mainContainer">
         <div className="smallHeader">Wave Count at: {currentWaves}</div>
       </div>
-      {allWaves.map((wave, index) => {
+      {allWaves.slice(0).reverse().map((wave, index) => {
         return (
           <div className="box">
             <div
@@ -231,8 +245,10 @@ export default function App() {
               <div>
                 <div className="fit">
                   <div>
-                    Address: {wave.address}<br/>
-                    Time: {wave.timestamp.toString()}<br/>
+                    Address: {wave.address}
+                    <br />
+                    Time: {wave.timestamp.toString()}
+                    <br />
                     Message: {wave.message}
                   </div>
                 </div>
